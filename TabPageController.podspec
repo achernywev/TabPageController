@@ -18,8 +18,8 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '12.0'
   s.requires_arc          = true
 
-  s.source_files     = 'Classes/**/*.{swift}'
-  s.resources        = 'Resources/**/*.{png,jpeg,jpg,storyboard,xib,xcassets}'
+  s.source_files     = 'TabPageControllerPod/Classes/**/*.{swift}'
+  s.resources        = 'TabPageControllerPod/Resources/**/*.{png,jpeg,jpg,storyboard,xib,xcassets}'
   
   s.frameworks       = "UIKit", "Foundation"
   s.swift_version    = "5.0"
