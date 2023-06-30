@@ -10,17 +10,19 @@
 		8098A51525860980005A88B8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8098A51425860980005A88B8 /* AppDelegate.swift */; };
 		8098A51E25860981005A88B8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8098A51D25860981005A88B8 /* Assets.xcassets */; };
 		8098A52125860981005A88B8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8098A51F25860981005A88B8 /* LaunchScreen.storyboard */; };
-		CAFBE3456D5CF751097D05C6 /* Pods_TabPageControllerExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70826AA33DAF96F7FEBEF49F /* Pods_TabPageControllerExample.framework */; };
+		E4EE9F6DB49552938C59EA2D /* Pods_TabPageControllerExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B786C78D49D119E2C46AEE6 /* Pods_TabPageControllerExample.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1CF69F7D5584F5295727F99F /* Pods-TabPageViewControllerExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TabPageViewControllerExample.release.xcconfig"; path = "Target Support Files/Pods-TabPageViewControllerExample/Pods-TabPageViewControllerExample.release.xcconfig"; sourceTree = "<group>"; };
+		3B786C78D49D119E2C46AEE6 /* Pods_TabPageControllerExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TabPageControllerExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5745ECA45CFFC5CA961A528C /* Pods-TabPageControllerExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TabPageControllerExample.release.xcconfig"; path = "Target Support Files/Pods-TabPageControllerExample/Pods-TabPageControllerExample.release.xcconfig"; sourceTree = "<group>"; };
-		70826AA33DAF96F7FEBEF49F /* Pods_TabPageControllerExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TabPageControllerExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8098A51125860980005A88B8 /* TabPageControllerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TabPageControllerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8098A51425860980005A88B8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8098A51D25860981005A88B8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8098A52025860981005A88B8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8098A52225860981005A88B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C8D317FEB6B4C56FAF1BE087 /* Pods-TabPageViewControllerExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TabPageViewControllerExample.debug.xcconfig"; path = "Target Support Files/Pods-TabPageViewControllerExample/Pods-TabPageViewControllerExample.debug.xcconfig"; sourceTree = "<group>"; };
 		FC9B6A75F045A6498B6BBD13 /* Pods-TabPageControllerExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TabPageControllerExample.debug.xcconfig"; path = "Target Support Files/Pods-TabPageControllerExample/Pods-TabPageControllerExample.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -29,7 +31,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CAFBE3456D5CF751097D05C6 /* Pods_TabPageControllerExample.framework in Frameworks */,
+				E4EE9F6DB49552938C59EA2D /* Pods_TabPageControllerExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -39,7 +41,7 @@
 		8098A50825860980005A88B8 = {
 			isa = PBXGroup;
 			children = (
-				8098A51325860980005A88B8 /* TabPageControllerExample */,
+				8098A51325860980005A88B8 /* TabPageViewControllerExample */,
 				8098A51225860980005A88B8 /* Products */,
 				831BBC4496AE6485BD841667 /* Pods */,
 				DF4D9E5E3854B58EEB95065A /* Frameworks */,
@@ -54,7 +56,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		8098A51325860980005A88B8 /* TabPageControllerExample */ = {
+		8098A51325860980005A88B8 /* TabPageViewControllerExample */ = {
 			isa = PBXGroup;
 			children = (
 				8098A51425860980005A88B8 /* AppDelegate.swift */,
@@ -62,6 +64,7 @@
 				8098A51F25860981005A88B8 /* LaunchScreen.storyboard */,
 				8098A52225860981005A88B8 /* Info.plist */,
 			);
+			name = TabPageViewControllerExample;
 			path = TabPageControllerExample;
 			sourceTree = "<group>";
 		};
@@ -70,6 +73,8 @@
 			children = (
 				FC9B6A75F045A6498B6BBD13 /* Pods-TabPageControllerExample.debug.xcconfig */,
 				5745ECA45CFFC5CA961A528C /* Pods-TabPageControllerExample.release.xcconfig */,
+				C8D317FEB6B4C56FAF1BE087 /* Pods-TabPageViewControllerExample.debug.xcconfig */,
+				1CF69F7D5584F5295727F99F /* Pods-TabPageViewControllerExample.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -77,7 +82,7 @@
 		DF4D9E5E3854B58EEB95065A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				70826AA33DAF96F7FEBEF49F /* Pods_TabPageControllerExample.framework */,
+				3B786C78D49D119E2C46AEE6 /* Pods_TabPageControllerExample.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -93,7 +98,7 @@
 				8098A50D25860980005A88B8 /* Sources */,
 				8098A50E25860980005A88B8 /* Frameworks */,
 				8098A50F25860980005A88B8 /* Resources */,
-				954C834C4058784E9030772A /* [CP] Embed Pods Frameworks */,
+				E40B8294E847104FE1126620 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -171,7 +176,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		954C834C4058784E9030772A /* [CP] Embed Pods Frameworks */ = {
+		E40B8294E847104FE1126620 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (

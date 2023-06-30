@@ -1,26 +1,21 @@
 Pod::Spec.new do |s|
-  s.name             = 'TabPageController'
-  s.version          = '0.1.0'
-  s.summary          = 'Container controller for managing top navigation pages'
-  s.license          = { :type => 'MIT', :file => 'LICENSE' }
-
+  s.name             = "TabPageController"
+  s.version          = "1.0.0"
+  s.license          = { :type => "MIT", :file => "LICENSE" }
+  s.summary          = "Container controller for managing top navigation pages"
   s.description      = <<-DESC
-  This CocoaPod provides the ability to use TabPageController as a container for multiple UIViewControllers.
+  "This CocoaPod provides the ability to use TabPageController as a container for multiple UIViewControllers."
                        DESC
 
-  s.homepage         = 'https://github.com/AChernywev/TabPageController'
-  s.author           = { 'Aleksandr Chernyshev' => 'achernywev@gmail.com' }
-  s.source           = { :git => 'https://github.com/achernywev/TabPageController.git', :tag => s.version.to_s }
-  # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
-
+  s.homepage              = "https://github.com/achernywev/TabPageController"
+  s.source                = { :git => "https://github.com/achernywev/TabPageController.git", :tag => s.version.to_s }
+  s.author                = { "Aleksandr Chernyshev" => "achernywev@gmail.com" }
+  s.social_media_url      = "https://www.linkedin.com/in/achernywev"
   s.platform              = :ios
-  s.ios.deployment_target = '12.0'
+  s.ios.deployment_target = "12.0"
   s.requires_arc          = true
 
-  s.source_files     = 'TabPageControllerPod/Classes/**/*.{swift}'
-  s.resources        = 'TabPageControllerPod/Resources/**/*.{png,jpeg,jpg,storyboard,xib,xcassets}'
-  
+  s.source_files     = "Pod/**/*.{swift}"
   s.frameworks       = "UIKit", "Foundation"
   s.swift_version    = "5.0"
 end
