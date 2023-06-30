@@ -62,7 +62,7 @@ open class TabPageController<Cell: TabPageCell>: UIViewController, UIScrollViewD
         }
     }
     
-    // MARK: - public readonly properties
+    // MARK: - public readonly properties    
     public private(set) lazy var separatorView: UIView = {
         let sepView = UIView()
         sepView.addSubview(indicatorView)
@@ -80,13 +80,32 @@ open class TabPageController<Cell: TabPageCell>: UIViewController, UIScrollViewD
         return indView
     }()
     
-    // MARK: - private properties
-    private lazy var contentView: UIStackView = {
+    // MARK: - internal readonly properties
+    private(set) lazy var contentView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [collectionView, separatorContainerView, scrollView])
         stackView.axis = .vertical
         return stackView
     }()
     
+    private(set) lazy var scrollView: UIScrollView = {
+        let scrView = UIScrollView()
+        scrView.isPagingEnabled = true
+        scrView.bounces = false
+        scrView.delegate = self
+        scrView.showsHorizontalScrollIndicator = false
+        scrView.showsVerticalScrollIndicator = false
+        return scrView
+    }()
+    
+    private(set) var selectedIndex: Int? {
+        didSet {
+            selectedIndexUpdated(from: oldValue, to: selectedIndex)
+        }
+    }
+    
+    private(set) var pageItems: [Item] = []
+    
+    // MARK: - private properties    
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = UICollectionView.ScrollDirection.horizontal
@@ -98,16 +117,6 @@ open class TabPageController<Cell: TabPageCell>: UIViewController, UIScrollViewD
         collView.delegate = self
         collView.register(Cell.self, forCellWithReuseIdentifier: TabPageCellIdentifier)
         return collView
-    }()
-    
-    private lazy var scrollView: UIScrollView = {
-        let scrView = UIScrollView()
-        scrView.isPagingEnabled = true
-        scrView.bounces = false
-        scrView.delegate = self
-        scrView.showsHorizontalScrollIndicator = false
-        scrView.showsVerticalScrollIndicator = false
-        return scrView
     }()
     
     private lazy var separatorContainerView: UIView = {
@@ -124,40 +133,6 @@ open class TabPageController<Cell: TabPageCell>: UIViewController, UIScrollViewD
     private var separatorHeightConstraint: NSLayoutConstraint!
     private var indicatorHeightConstraint: NSLayoutConstraint!
     private var collectionHeightConstraint: NSLayoutConstraint!
-    
-    private var selectedIndex: Int? {
-        didSet {
-            if oldValue != self.selectedIndex {
-                startUpdatingAppearingForController(atIndex: selectedIndex,
-                                                    replacingControllerAtIndex: oldValue)
-                UIView.animate(withDuration: 0.25,
-                               delay: 0,
-                               options: [.curveLinear, .allowUserInteraction, .beginFromCurrentState],
-                               animations: {
-                    self.scrollView.contentOffset = CGPoint(
-                        x: CGFloat(self.selectedIndex ?? 0) * self.scrollView.bounds.size.width,
-                        y: 0
-                    )
-                },
-                               completion: { _ in
-                    let indexPaths = [oldValue?.indexPath, self.selectedIndex?.indexPath].compactMap { $0 }
-                    self.collectionView.reloadItems(at: indexPaths)
-                    self.endUpdatingAppearingForController(atIndex: self.selectedIndex,
-                                                           replacingControllerAtIndex: oldValue)
-                })
-            }
-        }
-    }
-    
-    private var pageItems: [Item] = [] {
-        didSet {
-            oldValue.forEach {
-                $0.viewController.willMove(toParent: nil)
-                $0.viewController.removeFromParent()
-            }
-            updateScreen()
-        }
-    }
     
     private var isHeaderViewHidden: Bool = false {
         didSet {
@@ -200,43 +175,78 @@ open class TabPageController<Cell: TabPageCell>: UIViewController, UIScrollViewD
     
     // MARK: public methods
     public func updatePageItems(_ pageItems: [Item]) {
+        self.pageItems.forEach {
+            $0.viewController.willMove(toParent: nil)
+            $0.viewController.view.removeFromSuperview()
+            $0.viewController.removeFromParent()
+        }
         self.pageItems = pageItems
+        updateScreen()
+    }
+    
+    // MARK: internal methods
+    func selectedIndexUpdated(from oldValue: Int?, to newValue: Int?) {
+        if oldValue != newValue {
+            startUpdatingAppearingForController(atIndex: newValue,
+                                                replacingControllerAtIndex: oldValue)
+            UIView.animate(withDuration: 0.25,
+                           delay: 0,
+                           options: [.curveLinear, .allowUserInteraction, .beginFromCurrentState],
+                           animations: {
+                self.scrollView.contentOffset = CGPoint(
+                    x: CGFloat(newValue ?? 0) * self.scrollView.bounds.size.width,
+                    y: 0
+                )
+            },
+                           completion: { _ in
+                let indexPaths = [oldValue?.indexPath, newValue?.indexPath].compactMap { $0 }
+                self.collectionView.reloadItems(at: indexPaths)
+                self.endUpdatingAppearingForController(atIndex: newValue,
+                                                       replacingControllerAtIndex: oldValue)
+            })
+        }
     }
     
     // MARK: private methods
     private func setupConstraints() {
         contentView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        contentView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         contentView.setCustomSpacing(tabTitlesBottomOffset, after: collectionView)
         contentView.setCustomSpacing(tabSeparatorBottomOffset, after: separatorContainerView)
+        NSLayoutConstraint.activate([
+            contentView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
         
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionHeightConstraint = collectionView.heightAnchor.constraint(equalToConstant: tabTitlesHeight)
         collectionHeightConstraint.isActive = true
         
         separatorView.translatesAutoresizingMaskIntoConstraints = false
-        separatorView.topAnchor.constraint(equalTo: separatorContainerView.topAnchor).isActive = true
-        separatorView.bottomAnchor.constraint(equalTo: separatorContainerView.bottomAnchor).isActive = true
         separatorHeightConstraint = separatorView.heightAnchor.constraint(equalToConstant: tabSeparatorHeight)
-        separatorHeightConstraint.isActive = true
         separatorLeadingConstraint = separatorView.leadingAnchor.constraint(equalTo: separatorContainerView.leadingAnchor,
                                                                             constant: tabTitlesInset)
-        separatorLeadingConstraint.isActive = true
         separatorTrailingConstraint = separatorView.trailingAnchor.constraint(equalTo: separatorContainerView.trailingAnchor,
                                                                               constant: -tabTitlesInset)
-        separatorTrailingConstraint.isActive = true
+        NSLayoutConstraint.activate([
+            separatorView.topAnchor.constraint(equalTo: separatorContainerView.topAnchor),
+            separatorView.bottomAnchor.constraint(equalTo: separatorContainerView.bottomAnchor),
+            separatorLeadingConstraint,
+            separatorTrailingConstraint,
+            separatorHeightConstraint
+        ])
         
         indicatorView.translatesAutoresizingMaskIntoConstraints = false
         indicatorWidthConstraint = indicatorView.widthAnchor.constraint(equalToConstant: defaultIndicatorWidth)
-        indicatorWidthConstraint.isActive = true
         indicatorLeadingConstraint = indicatorView.leadingAnchor.constraint(equalTo: separatorView.leadingAnchor)
-        indicatorLeadingConstraint.isActive = true
-        indicatorView.bottomAnchor.constraint(equalTo: separatorView.bottomAnchor).isActive = true
         indicatorHeightConstraint = indicatorView.heightAnchor.constraint(equalToConstant: indicatorViewHeight)
-        indicatorHeightConstraint.isActive = true
+        NSLayoutConstraint.activate([
+            indicatorView.bottomAnchor.constraint(equalTo: separatorView.bottomAnchor),
+            indicatorLeadingConstraint,
+            indicatorWidthConstraint,
+            indicatorHeightConstraint
+        ])
     }
     
     private func updateScreen() {
@@ -315,57 +325,30 @@ open class TabPageController<Cell: TabPageCell>: UIViewController, UIScrollViewD
         controller.didMove(toParent: self)
     }
     
-    private func controller(atIndex index: Int?) -> UIViewController? {
-        guard let index = index, index >= 0, index < pageItems.count else { return nil }
-        return pageItems[index].viewController
-    }
-    
-    private func beginAppearence(_ isAppearing: Bool, forControllerAtIndex index: Int?, animated: Bool) {
-        controller(atIndex: index)?.beginAppearanceTransition(isAppearing, animated: animated)
-    }
-    
-    private func endAppearence(forControllerAtIndex index: Int?) {
-        controller(atIndex: index)?.endAppearanceTransition()
-    }
-    
-    private func startUpdatingAppearingForController(atIndex appearingIndex: Int?,
-                                                     replacingControllerAtIndex disappearingIndex: Int?) {
-        guard let disappearingIndex = disappearingIndex else { return }
-        beginAppearence(true, forControllerAtIndex: appearingIndex, animated: true)
-        beginAppearence(false, forControllerAtIndex: disappearingIndex, animated: true)
-    }
-    
-    private func endUpdatingAppearingForController(atIndex appearingIndex: Int?,
-                                                   replacingControllerAtIndex disappearingIndex: Int?) {
-        guard let disappearingIndex = disappearingIndex else { return }
-        endAppearence(forControllerAtIndex: appearingIndex)
-        endAppearence(forControllerAtIndex: disappearingIndex)
-    }
-    
     // MARK: <UIScrollViewDelegate> methods
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard self.scrollView == scrollView else { return }
-        
+
         let maxScrollOffset = scrollView.contentSize.width - scrollView.bounds.size.width
         let maxHeaderOffset = collectionView.contentSize.width - collectionView.bounds.size.width
-        
+
         let percent = scrollView.contentOffset.x / maxScrollOffset
         let headerOffset = maxHeaderOffset * percent
-        
+
         let offset = scrollView.contentOffset.x
         let numOfPages = Int(floor(offset / scrollView.bounds.size.width))
         let pagePercent = fmod(offset, scrollView.bounds.size.width) / scrollView.bounds.size.width
-        
+
         let fullPrevIndicatorLength = (0..<numOfPages).reduce(0, { result, index -> CGFloat in
             return result + widthAtIndex(index)
         })
         let currentIndicatorWidth = widthAtIndex(numOfPages)
-        
+
         let indicatorOffset = fullPrevIndicatorLength + pagePercent * currentIndicatorWidth - headerOffset
         let newWidth = currentIndicatorWidth + (widthAtIndex(numOfPages + 1) - currentIndicatorWidth) * pagePercent
         indicatorLeadingConstraint.constant = CGFloat.maximum(0, indicatorOffset)
         indicatorWidthConstraint.constant = newWidth
-        
+
         UIView.animate(withDuration: 0.25,
                        delay: 0,
                        options: [.curveLinear, .allowUserInteraction, .beginFromCurrentState],
@@ -388,10 +371,11 @@ open class TabPageController<Cell: TabPageCell>: UIViewController, UIScrollViewD
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TabPageCellIdentifier,
-                                                      for: indexPath) as! Cell
+                                                      for: indexPath)
+        guard let modelCell = cell as? Cell else { return cell }
         let model = pageItems[indexPath.row].model
-        cell.update(for: model, isSelected: selectedIndex == indexPath.index)
-        return cell
+        modelCell.update(for: model, isSelected: selectedIndex == indexPath.index)
+        return modelCell
     }
     
     // MARK: <UICollectionViewDelegate> methods
@@ -423,6 +407,36 @@ open class TabPageController<Cell: TabPageCell>: UIViewController, UIScrollViewD
                                layout collectionViewLayout: UICollectionViewLayout,
                                minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0.1
+    }
+}
+
+// MARK: - Appearence methods
+private extension TabPageController {
+    func controller(atIndex index: Int?) -> UIViewController? {
+        guard let index = index, index >= 0, index < pageItems.count else { return nil }
+        return pageItems[index].viewController
+    }
+    
+    func beginAppearence(_ isAppearing: Bool, forControllerAtIndex index: Int?, animated: Bool) {
+        controller(atIndex: index)?.beginAppearanceTransition(isAppearing, animated: animated)
+    }
+    
+    func endAppearence(forControllerAtIndex index: Int?) {
+        controller(atIndex: index)?.endAppearanceTransition()
+    }
+    
+    func startUpdatingAppearingForController(atIndex appearingIndex: Int?,
+                                                     replacingControllerAtIndex disappearingIndex: Int?) {
+        guard let disappearingIndex = disappearingIndex else { return }
+        beginAppearence(true, forControllerAtIndex: appearingIndex, animated: true)
+        beginAppearence(false, forControllerAtIndex: disappearingIndex, animated: true)
+    }
+    
+    func endUpdatingAppearingForController(atIndex appearingIndex: Int?,
+                                                   replacingControllerAtIndex disappearingIndex: Int?) {
+        guard let disappearingIndex = disappearingIndex else { return }
+        endAppearence(forControllerAtIndex: appearingIndex)
+        endAppearence(forControllerAtIndex: disappearingIndex)
     }
 }
 
