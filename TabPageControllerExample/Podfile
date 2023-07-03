@@ -2,5 +2,5 @@ platform :'ios', '13.0'
 use_frameworks!
 
 target 'TabPageControllerExample' do
-  pod 'TabPageController'#, :path => '../'
+  pod 'TabPageController', :path => '../'
 end
